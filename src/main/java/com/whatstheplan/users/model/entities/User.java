@@ -22,10 +22,10 @@ public class User extends AbstractAuditingEntity<UUID> {
     @Id
     private UUID id;
 
-    @Column
+    @Column(unique = true)
     private String username;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
     @Column

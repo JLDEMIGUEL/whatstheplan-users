@@ -19,6 +19,7 @@ public class UserService {
 
     public User saveUser(UserCreationRequest request) {
         try {
+            log.info("Saving into database user with data: {}", request);
             return usersRepository.save(request.toEntity());
         } catch (DataIntegrityViolationException e) {
             if (e.getMessage().contains("users_email_key")) {

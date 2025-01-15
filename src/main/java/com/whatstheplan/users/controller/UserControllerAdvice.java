@@ -43,6 +43,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        log.warn("Request validation error occurred: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponse(String.join(" ", ex.getBindingResult().getFieldErrors().stream()
                         .map(FieldError::getDefaultMessage)
