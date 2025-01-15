@@ -2,7 +2,7 @@ name: Build and Push to ECR, then Deploy to ECS
 
 on:
   push:
-    branches: [ "development" ]
+    branches: [ "DISABLED" ]
 
 jobs:
   build-and-deploy:
