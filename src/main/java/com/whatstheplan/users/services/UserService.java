@@ -1,7 +1,6 @@
 package com.whatstheplan.users.services;
 
 import com.whatstheplan.users.exceptions.EmailAlreadyExistsException;
-import com.whatstheplan.users.exceptions.GenericException;
 import com.whatstheplan.users.exceptions.UsernameAlreadyExistsException;
 import com.whatstheplan.users.model.entities.User;
 import com.whatstheplan.users.model.request.UserCreationRequest;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -19,17 +17,16 @@ public class UserService {
 
     private final UsersRepository usersRepository;
 
-    @Transactional
     public User saveUser(UserCreationRequest request) {
         try {
             return usersRepository.save(request.toEntity());
         } catch (DataIntegrityViolationException e) {
-            if (e.getMessage().contains("email")) {
+            if (e.getMessage().contains("users_email_key")) {
                 throw new EmailAlreadyExistsException("Email is already in use.", e);
-            } else if (e.getMessage().contains("username")) {
+            } else if (e.getMessage().contains("users_username_key")) {
                 throw new UsernameAlreadyExistsException("Username is already taken.", e);
             } else {
-                throw new GenericException("An error occurred while creating the user.", e);
+                throw e;
             }
         }
     }

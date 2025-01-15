@@ -125,7 +125,7 @@ class UsersControllerIntegrationTest extends BaseIntegrationTest {
         ErrorResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResponse.class);
         assertThat(response.getReason()).isEqualTo("Username already exists.");
 
-        assertThat(usersRepository.count()).isEqualTo(0);
+        assertThat(usersRepository.count()).isEqualTo(1);
         assertThat(preferencesRepository.count()).isEqualTo(0);
     }
 
@@ -167,7 +167,7 @@ class UsersControllerIntegrationTest extends BaseIntegrationTest {
         ErrorResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResponse.class);
         assertThat(response.getReason()).isEqualTo("Email already exists.");
 
-        assertThat(usersRepository.count()).isEqualTo(0);
+        assertThat(usersRepository.count()).isEqualTo(1);
         assertThat(preferencesRepository.count()).isEqualTo(0);
     }
 
@@ -194,7 +194,8 @@ class UsersControllerIntegrationTest extends BaseIntegrationTest {
 
         // then
         ErrorResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResponse.class);
-        assertThat(response.getReason()).isEqualTo("Username is mandatory.");
+        assertThat(response.getReason()).contains("Username is mandatory.", "First name is mandatory.",
+                "Last name is mandatory.", "City name is mandatory.");
 
         assertThat(usersRepository.count()).isEqualTo(0);
         assertThat(preferencesRepository.count()).isEqualTo(0);
@@ -216,6 +217,8 @@ class UsersControllerIntegrationTest extends BaseIntegrationTest {
         // when
         MvcResult result = mockMvc.perform(post("/users")
                         .with(jwt()
+                                .jwt(jwt -> jwt
+                                        .claim("sub", UUID.randomUUID()))
                                 .authorities(new SimpleGrantedAuthority("ROLE_user")))
                         .contentType(APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsBytes(newUser)))

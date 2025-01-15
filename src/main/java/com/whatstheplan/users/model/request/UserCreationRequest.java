@@ -1,6 +1,7 @@
 package com.whatstheplan.users.model.request;
 
 
+import com.whatstheplan.users.exceptions.MissingEmailInTokenException;
 import com.whatstheplan.users.model.ActivityType;
 import com.whatstheplan.users.model.entities.Preferences;
 import com.whatstheplan.users.model.entities.User;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -44,9 +46,11 @@ public class UserCreationRequest {
     public User toEntity() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        String email = Optional.ofNullable(((Jwt) authentication.getPrincipal()).getClaimAsString("email"))
+                .orElseThrow(() -> new MissingEmailInTokenException("Invalid token, email not found.", null));
         User userEntity = User.builder()
                 .id(UUID.fromString(authentication.getName()))
-                .email(((Jwt) authentication.getPrincipal()).getClaimAsString("email"))
+                .email(email)
                 .username(username)
                 .firstName(firstName)
                 .lastName(lastName)
