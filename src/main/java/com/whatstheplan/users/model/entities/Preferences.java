@@ -2,10 +2,7 @@ package com.whatstheplan.users.model.entities;
 
 import com.whatstheplan.users.model.ActivityType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
@@ -14,7 +11,8 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@ToString(exclude = "user")
+@EqualsAndHashCode(callSuper = true, exclude = "user")
 @Entity
 @Table(name = "preferences")
 public class Preferences extends AbstractAuditingEntity<UUID> {

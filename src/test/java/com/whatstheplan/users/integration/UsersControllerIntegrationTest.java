@@ -1,6 +1,7 @@
 package com.whatstheplan.users.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.whatstheplan.users.model.ActivityType;
 import com.whatstheplan.users.model.entities.Preferences;
 import com.whatstheplan.users.model.entities.User;
 import com.whatstheplan.users.model.request.UserCreationRequest;
@@ -16,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import static com.whatstheplan.users.model.ActivityType.*;
@@ -82,7 +82,7 @@ class UsersControllerIntegrationTest extends BaseIntegrationTest {
         assertThat(savedUser.getCreatedDate()).isNotNull();
         assertThat(savedUser.getLastModifiedDate()).isNotNull();
 
-        assertThat(savedPreferences.stream().map(Preferences::getActivityType).map(Objects::toString).toList())
+        assertThat(savedPreferences.stream().map(Preferences::getActivityType).map(ActivityType::getName).toList())
                 .containsAll(preferences);
     }
 
