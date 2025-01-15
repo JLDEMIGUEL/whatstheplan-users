@@ -3,6 +3,8 @@ package com.whatstheplan.users.model;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
+
 @Getter
 @RequiredArgsConstructor
 public enum ActivityType {
@@ -48,6 +50,13 @@ public enum ActivityType {
     LANGUAGE_LEARNING("Language Learning"),
     PAINTING("Painting");
 
-    private final String displayName;
+    private final String name;
+
+    public static ActivityType from(String name) {
+        return Arrays.stream(ActivityType.values())
+                .filter(activityType -> activityType.name.equals(name))
+                .findFirst()
+                .orElseThrow();
+    }
 }
 

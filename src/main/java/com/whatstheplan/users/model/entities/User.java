@@ -37,6 +37,6 @@ public class User extends AbstractAuditingEntity<UUID> {
     @Column
     private String city;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Preferences> preferences;
 }
