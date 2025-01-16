@@ -21,13 +21,12 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private String city;
-    private List<PreferencesResponse> preferences;
+    private List<String> preferences;
 
     public static UserResponse from(User user) {
-        List<PreferencesResponse> preferences = user.getPreferences().stream()
+        List<String> preferences = user.getPreferences().stream()
                 .map(Preferences::getActivityType)
                 .map(ActivityType::getName)
-                .map(PreferencesResponse::new)
                 .toList();
 
         return UserResponse.builder()

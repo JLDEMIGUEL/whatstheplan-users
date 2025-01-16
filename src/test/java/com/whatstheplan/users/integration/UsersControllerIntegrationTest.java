@@ -6,6 +6,7 @@ import com.whatstheplan.users.model.entities.Preferences;
 import com.whatstheplan.users.model.entities.User;
 import com.whatstheplan.users.model.request.UserCreationRequest;
 import com.whatstheplan.users.model.response.ErrorResponse;
+import com.whatstheplan.users.model.response.UserResponse;
 import com.whatstheplan.users.repository.PreferencesRepository;
 import com.whatstheplan.users.repository.UsersRepository;
 import com.whatstheplan.users.testconfig.BaseIntegrationTest;
@@ -60,7 +61,7 @@ class UsersControllerIntegrationTest extends BaseIntegrationTest {
                 .build();
 
         // when
-        mockMvc.perform(post("/users")
+        MvcResult result = mockMvc.perform(post("/users")
                         .with(jwt()
                                 .jwt(jwt -> jwt
                                         .claim("sub", UUID.randomUUID())
@@ -68,11 +69,20 @@ class UsersControllerIntegrationTest extends BaseIntegrationTest {
                                 .authorities(new SimpleGrantedAuthority("ROLE_user")))
                         .contentType(APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsBytes(newUser)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn();
 
         // then
         User savedUser = usersRepository.findAll().get(0);
         List<Preferences> savedPreferences = preferencesRepository.findAll();
+        UserResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), UserResponse.class);
+
+        assertThat(response.getUsername()).isEqualTo(newUser.getUsername());
+        assertThat(response.getEmail()).isEqualTo(email);
+        assertThat(response.getFirstName()).isEqualTo(newUser.getFirstName());
+        assertThat(response.getLastName()).isEqualTo(newUser.getLastName());
+        assertThat(response.getCity()).isEqualTo(newUser.getCity());
+        assertThat(response.getPreferences()).containsAll(preferences);
 
         assertThat(savedUser.getUsername()).isEqualTo(newUser.getUsername());
         assertThat(savedUser.getEmail()).isEqualTo(email);
