@@ -20,14 +20,16 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.List;
 import java.util.UUID;
 
-import static com.whatstheplan.users.model.ActivityType.*;
+import static com.whatstheplan.users.model.ActivityType.BASEBALL;
+import static com.whatstheplan.users.model.ActivityType.FOOD;
+import static com.whatstheplan.users.model.ActivityType.SOCCER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
-class UsersControllerIntegrationTest extends BaseIntegrationTest {
+class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

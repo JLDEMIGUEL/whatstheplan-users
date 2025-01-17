@@ -3,6 +3,7 @@ package com.whatstheplan.users.controller;
 
 import com.whatstheplan.users.exceptions.EmailAlreadyExistsException;
 import com.whatstheplan.users.exceptions.MissingEmailInTokenException;
+import com.whatstheplan.users.exceptions.UserNotExistsException;
 import com.whatstheplan.users.exceptions.UsernameAlreadyExistsException;
 import com.whatstheplan.users.model.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class UserControllerAdvice {
+
+    @ExceptionHandler(UserNotExistsException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(UserNotExistsException ex) {
+        log.warn("User does not exists: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorResponse("User does not exists.")
+        );
+    }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {

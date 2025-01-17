@@ -1,7 +1,6 @@
 package com.whatstheplan.users.model.request;
 
 
-import com.whatstheplan.users.exceptions.MissingEmailInTokenException;
 import com.whatstheplan.users.model.ActivityType;
 import com.whatstheplan.users.model.entities.Preferences;
 import com.whatstheplan.users.model.entities.User;
@@ -11,13 +10,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
+import static com.whatstheplan.users.utils.Utils.getUserEmail;
+import static com.whatstheplan.users.utils.Utils.getUserId;
 
 @Data
 @Builder
@@ -44,13 +41,9 @@ public class UserCreationRequest {
     private List<@NotBlank(message = "Each preference must not be blank.") String> preferences;
 
     public User toEntity() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        String email = Optional.ofNullable(((Jwt) authentication.getPrincipal()).getClaimAsString("email"))
-                .orElseThrow(() -> new MissingEmailInTokenException("Invalid token, email not found.", null));
         User userEntity = User.builder()
-                .id(UUID.fromString(authentication.getName()))
-                .email(email)
+                .id(getUserId())
+                .email(getUserEmail())
                 .username(username)
                 .firstName(firstName)
                 .lastName(lastName)
