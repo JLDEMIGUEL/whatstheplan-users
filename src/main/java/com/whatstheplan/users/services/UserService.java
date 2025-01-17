@@ -4,7 +4,7 @@ import com.whatstheplan.users.exceptions.EmailAlreadyExistsException;
 import com.whatstheplan.users.exceptions.UserNotExistsException;
 import com.whatstheplan.users.exceptions.UsernameAlreadyExistsException;
 import com.whatstheplan.users.model.entities.User;
-import com.whatstheplan.users.model.request.UserCreationRequest;
+import com.whatstheplan.users.model.request.UserProfileRequest;
 import com.whatstheplan.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+
+import static com.whatstheplan.users.utils.Utils.getUserId;
 
 @Slf4j
 @Service
@@ -25,7 +27,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotExistsException("User not found with userId: " + userId, null));
     }
 
-    public User saveUser(UserCreationRequest request) {
+    public User saveUser(UserProfileRequest request) {
         try {
             log.info("Saving into database user with data: {}", request);
             return usersRepository.save(request.toEntity());
@@ -33,6 +35,27 @@ public class UserService {
             if (e.getMessage().contains("users_email_key")) {
                 throw new EmailAlreadyExistsException("Email is already in use.", e);
             } else if (e.getMessage().contains("users_username_key")) {
+                throw new UsernameAlreadyExistsException("Username is already taken.", e);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    public User updateUser(UserProfileRequest request) {
+        try {
+            log.info("Updating into database user with data: {}", request);
+
+            return usersRepository.findById(getUserId())
+                    .map(user -> {
+                        User updatedUser = request.toEntity();
+                        updatedUser.setId(user.getId());
+                        updatedUser.setEmail(user.getEmail());
+                        return usersRepository.save(updatedUser);
+                    })
+                    .orElseThrow(() -> new UserNotExistsException("User not found with userId: " + getUserId(), null));
+        } catch (DataIntegrityViolationException e) {
+            if (e.getMessage().contains("users_username_key")) {
                 throw new UsernameAlreadyExistsException("Username is already taken.", e);
             } else {
                 throw e;

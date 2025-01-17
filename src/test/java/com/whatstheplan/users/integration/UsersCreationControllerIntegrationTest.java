@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whatstheplan.users.model.ActivityType;
 import com.whatstheplan.users.model.entities.Preferences;
 import com.whatstheplan.users.model.entities.User;
-import com.whatstheplan.users.model.request.UserCreationRequest;
+import com.whatstheplan.users.model.request.UserProfileRequest;
 import com.whatstheplan.users.model.response.ErrorResponse;
 import com.whatstheplan.users.model.response.UserResponse;
 import com.whatstheplan.users.repository.PreferencesRepository;
@@ -54,7 +54,7 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
         //given
         String email = "test@test.com";
         List<String> preferences = List.of(SOCCER.getName(), BASEBALL.getName(), FOOD.getName());
-        UserCreationRequest newUser = UserCreationRequest.builder()
+        UserProfileRequest newUser = UserProfileRequest.builder()
                 .username("new_user")
                 .firstName("new")
                 .lastName("savedUser")
@@ -104,7 +104,7 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
         //given
         String email = "test@test.com";
         List<String> preferences = List.of(SOCCER.getName(), BASEBALL.getName(), FOOD.getName());
-        UserCreationRequest newUser = UserCreationRequest.builder()
+        UserProfileRequest newUser = UserProfileRequest.builder()
                 .username("new_user")
                 .firstName("new")
                 .lastName("savedUser")
@@ -146,7 +146,7 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
         //given
         String email = "test@test.com";
         List<String> preferences = List.of(SOCCER.getName(), BASEBALL.getName(), FOOD.getName());
-        UserCreationRequest newUser = UserCreationRequest.builder()
+        UserProfileRequest newUser = UserProfileRequest.builder()
                 .username("new_user")
                 .firstName("new")
                 .lastName("savedUser")
@@ -187,7 +187,7 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
     void whenAUserCreationRequestWithBadParameters_thenWillReturnBadRequest() throws Exception {
         //given
         String email = "test@test.com";
-        UserCreationRequest newUser = UserCreationRequest.builder()
+        UserProfileRequest newUser = UserProfileRequest.builder()
                 .username("")
                 .build();
 
@@ -217,7 +217,7 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
     void whenAUserCreationRequestWithTokenMissingEmail_thenWillReturnBadRequest() throws Exception {
         //given
         List<String> preferences = List.of(SOCCER.getName(), BASEBALL.getName(), FOOD.getName());
-        UserCreationRequest newUser = UserCreationRequest.builder()
+        UserProfileRequest newUser = UserProfileRequest.builder()
                 .username("new_user")
                 .firstName("new")
                 .lastName("savedUser")
@@ -249,7 +249,7 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
     void whenAUserCreationRequestWithMissingToken_thenWillReturnUnauthorized() throws Exception {
         //given
         List<String> preferences = List.of(SOCCER.getName(), BASEBALL.getName(), FOOD.getName());
-        UserCreationRequest newUser = UserCreationRequest.builder()
+        UserProfileRequest newUser = UserProfileRequest.builder()
                 .username("new_user")
                 .firstName("new")
                 .lastName("savedUser")

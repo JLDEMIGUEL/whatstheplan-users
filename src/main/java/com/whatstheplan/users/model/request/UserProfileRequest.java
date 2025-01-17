@@ -20,7 +20,7 @@ import static com.whatstheplan.users.utils.Utils.getUserId;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreationRequest {
+public class UserProfileRequest {
     @NotBlank(message = "Username is mandatory.")
     @Size(max = 255, message = "Username must be less than or equal to 255 characters.")
     private String username;
