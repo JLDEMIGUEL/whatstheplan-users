@@ -116,6 +116,7 @@ class UsersUpdateControllerIntegrationTest extends BaseIntegrationTest {
         assertThat(savedUser.getCreatedDate()).isNotNull();
         assertThat(savedUser.getLastModifiedDate()).isNotNull();
 
+        assertThat(savedPreferences.size()).isEqualTo(newPreferences.size());
         assertThat(savedPreferences.stream().map(Preferences::getActivityType).map(ActivityType::getName).toList())
                 .containsAll(newPreferences);
     }

@@ -5,7 +5,9 @@ import com.whatstheplan.users.exceptions.UserNotExistsException;
 import com.whatstheplan.users.exceptions.UsernameAlreadyExistsException;
 import com.whatstheplan.users.model.entities.User;
 import com.whatstheplan.users.model.request.UserProfileRequest;
+import com.whatstheplan.users.repository.PreferencesRepository;
 import com.whatstheplan.users.repository.UsersRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,12 +23,14 @@ import static com.whatstheplan.users.utils.Utils.getUserId;
 public class UserService {
 
     private final UsersRepository usersRepository;
+    private final PreferencesRepository preferencesRepository;
 
     public User getUserById(UUID userId) {
         return usersRepository.findById(userId)
                 .orElseThrow(() -> new UserNotExistsException("User not found with userId: " + userId, null));
     }
 
+    @Transactional
     public User saveUser(UserProfileRequest request) {
         try {
             log.info("Saving into database user with data: {}", request);
@@ -42,6 +46,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public User updateUser(UserProfileRequest request) {
         try {
             log.info("Updating into database user with data: {}", request);
@@ -51,6 +56,7 @@ public class UserService {
                         User updatedUser = request.toEntity();
                         updatedUser.setId(user.getId());
                         updatedUser.setEmail(user.getEmail());
+                        preferencesRepository.deleteAllByUser(user);
                         return usersRepository.save(updatedUser);
                     })
                     .orElseThrow(() -> new UserNotExistsException("User not found with userId: " + getUserId(), null));

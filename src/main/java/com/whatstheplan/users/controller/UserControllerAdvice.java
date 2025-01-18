@@ -7,6 +7,7 @@ import com.whatstheplan.users.exceptions.UserNotExistsException;
 import com.whatstheplan.users.exceptions.UsernameAlreadyExistsException;
 import com.whatstheplan.users.model.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -39,6 +40,23 @@ public class UserControllerAdvice {
         log.warn("Username already exists exception occurred: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponse("Username already exists.")
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        log.warn("Data Integrity Violation Exception occurred: {}", ex.getMessage(), ex);
+        if (ex.getMessage().contains("users_email_key")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ErrorResponse("Email already exists.")
+            );
+        } else if (ex.getMessage().contains("users_username_key")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ErrorResponse("Username already exists.")
+            );
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorResponse("Unexpected error occurred")
         );
     }
 
