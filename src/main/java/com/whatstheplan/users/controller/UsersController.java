@@ -35,6 +35,7 @@ public class UsersController {
 
         User savedUser = userService.getUserById(getUserId());
 
+        log.info("Returning successful found user: {}", getUserId());
         return ResponseEntity.ok(UserResponse.from(savedUser));
     }
 
@@ -44,6 +45,7 @@ public class UsersController {
 
         User savedUser = userService.saveUser(request);
 
+        log.info("Returning successful created user: {}", getUserId());
         return ResponseEntity.status(CREATED).body(UserResponse.from(savedUser));
     }
 
@@ -53,6 +55,7 @@ public class UsersController {
 
         User updatedUser = userService.updateUser(request);
 
+        log.info("Returning successful updated user: {}", getUserId());
         return ResponseEntity.ok(UserResponse.from(updatedUser));
     }
 }

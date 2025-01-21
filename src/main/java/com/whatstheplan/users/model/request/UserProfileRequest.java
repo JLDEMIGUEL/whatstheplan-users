@@ -5,6 +5,7 @@ import com.whatstheplan.users.model.ActivityType;
 import com.whatstheplan.users.model.entities.Preferences;
 import com.whatstheplan.users.model.entities.User;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,11 @@ import static com.whatstheplan.users.utils.Utils.getUserId;
 public class UserProfileRequest {
     @NotBlank(message = "Username is mandatory.")
     @Size(max = 255, message = "Username must be less than or equal to 255 characters.")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9._-]{3,15}$",
+            message = "Username must be 3-15 characters long and can only include letters," +
+                    " numbers, dots, underscores, and hyphens."
+    )
     private String username;
 
     @NotBlank(message = "First name is mandatory.")

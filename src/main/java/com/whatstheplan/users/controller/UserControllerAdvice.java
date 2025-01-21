@@ -21,7 +21,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(UserNotExistsException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(UserNotExistsException ex) {
-        log.warn("User does not exists: {}", ex.getMessage(), ex);
+        log.warn("User does not exists: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponse("User does not exists.")
         );
@@ -29,7 +29,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
-        log.warn("Email already exists exception occurred: {}", ex.getMessage(), ex);
+        log.warn("Email already exists exception occurred: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponse("Email already exists.")
         );
@@ -37,7 +37,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(UsernameAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleUsernameAlreadyExists(UsernameAlreadyExistsException ex) {
-        log.warn("Username already exists exception occurred: {}", ex.getMessage(), ex);
+        log.warn("Username already exists exception occurred: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponse("Username already exists.")
         );
@@ -45,7 +45,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        log.warn("Data Integrity Violation Exception occurred: {}", ex.getMessage(), ex);
+        log.warn("Data Integrity Violation Exception occurred: {}", ex.getMessage());
         if (ex.getMessage().contains("users_email_key")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ErrorResponse("Email already exists.")
@@ -62,7 +62,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(MissingEmailInTokenException.class)
     public ResponseEntity<ErrorResponse> handleMissingEmailInToken(MissingEmailInTokenException ex) {
-        log.warn("Missing email in token exception occurred: {}", ex.getMessage(), ex);
+        log.warn("Missing email in token exception occurred: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponse(ex.getMessage())
         );
@@ -70,7 +70,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        log.warn("Request validation error occurred: {}", ex.getMessage(), ex);
+        log.warn("Request validation error occurred: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponse(String.join(" ", ex.getBindingResult().getFieldErrors().stream()
                         .map(FieldError::getDefaultMessage)
