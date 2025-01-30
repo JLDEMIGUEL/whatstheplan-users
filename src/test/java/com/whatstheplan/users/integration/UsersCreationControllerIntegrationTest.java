@@ -98,7 +98,6 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
                 .containsAll(preferences);
     }
 
-
     @Test
     void whenAUserCreationRequestWithAlreadyExistingUsername_thenWillReturnBadRequest() throws Exception {
         //given
