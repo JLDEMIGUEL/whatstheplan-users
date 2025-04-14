@@ -23,7 +23,7 @@
       "secrets": [
         {
           "name": "AUTH_SERVER_URL",
-          "valueFrom": "arn:aws:ssm:eu-west-1:<AWS_ACCOUNT_ID>:parameter/whatstheplan/cognito/token-url"
+          "valueFrom": "arn:aws:ssm:eu-west-1:<AWS_ACCOUNT_ID>:parameter/whatstheplan/cognito/auth-url"
         },
         {
           "name": "DB_HOST",
