@@ -261,7 +261,7 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(post("/users")
                         .contentType(APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsBytes(newUser)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
 
         // then
         assertThat(usersRepository.count()).isEqualTo(0);

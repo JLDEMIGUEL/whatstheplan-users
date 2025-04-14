@@ -393,7 +393,7 @@ class UsersUpdateControllerIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(put("/users")
                         .contentType(APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsBytes(updateUser)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
 
         // then
         User savedUser = usersRepository.findAll().get(0);
