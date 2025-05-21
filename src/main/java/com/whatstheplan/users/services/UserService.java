@@ -24,6 +24,7 @@ public class UserService {
 
     private final UsersRepository usersRepository;
     private final PreferencesRepository preferencesRepository;
+    private final EmailService emailService;
 
     public User getUserById(UUID userId) {
         return usersRepository.findById(userId)
@@ -34,7 +35,9 @@ public class UserService {
     public User saveUser(UserProfileRequest request) {
         try {
             log.info("Saving into database user with data: {}", request);
-            return usersRepository.save(request.toEntity());
+            User user = usersRepository.save(request.toEntity());
+            emailService.sendWelcomeEmail(user.getUsername(), user.getEmail());
+            return user;
         } catch (DataIntegrityViolationException e) {
             if (e.getMessage().contains("users_email_key")) {
                 throw new EmailAlreadyExistsException("Email is already in use.", e);

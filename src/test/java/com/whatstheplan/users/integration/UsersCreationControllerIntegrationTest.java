@@ -2,6 +2,7 @@ package com.whatstheplan.users.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whatstheplan.users.model.ActivityType;
+import com.whatstheplan.users.model.email.WelcomeEmail;
 import com.whatstheplan.users.model.entities.Preferences;
 import com.whatstheplan.users.model.entities.User;
 import com.whatstheplan.users.model.request.UserProfileRequest;
@@ -13,6 +14,9 @@ import com.whatstheplan.users.testconfig.BaseIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.binder.test.OutputDestination;
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -23,12 +27,15 @@ import java.util.UUID;
 import static com.whatstheplan.users.model.ActivityType.BASEBALL;
 import static com.whatstheplan.users.model.ActivityType.FOOD;
 import static com.whatstheplan.users.model.ActivityType.SOCCER;
+import static com.whatstheplan.users.testconfig.rabbit.RabbitUtils.poll;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
+
+@Import(TestChannelBinderConfiguration.class)
 class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
@@ -43,6 +50,10 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    private OutputDestination output;
+
     @BeforeEach
     void setUp() {
         usersRepository.deleteAll();
@@ -50,7 +61,7 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    void whenANewUserCreationRequest_thenShouldStoreUserAndPreferences() throws Exception {
+    void whenANewUserCreationRequest_thenShouldStoreUserAndPreferencesAndSendEmailRequest() throws Exception {
         //given
         String email = "test@test.com";
         List<String> preferences = List.of(SOCCER.getName(), BASEBALL.getName(), FOOD.getName());
@@ -96,6 +107,11 @@ class UsersCreationControllerIntegrationTest extends BaseIntegrationTest {
 
         assertThat(savedPreferences.stream().map(Preferences::getActivityType).map(ActivityType::getName).toList())
                 .containsAll(preferences);
+
+        WelcomeEmail welcomeEmail = poll(output, "mail", WelcomeEmail.class);
+        assertThat(welcomeEmail).isNotNull();
+        assertThat(welcomeEmail.getEmail()).isEqualTo(email);
+        assertThat(welcomeEmail.getUsername()).isEqualTo(newUser.getUsername());
     }
 
     @Test

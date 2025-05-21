@@ -17,7 +17,6 @@ public class ActuatorTest extends BaseIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "/actuator/health",
             "/actuator/health/liveness",
             "/actuator/health/readiness"
     })

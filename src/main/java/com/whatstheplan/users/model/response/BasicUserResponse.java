@@ -13,10 +13,12 @@ import lombok.NoArgsConstructor;
 public class BasicUserResponse {
 
     private String username;
+    private String email;
 
     public static BasicUserResponse from(User user) {
         return BasicUserResponse.builder()
                 .username(user.getUsername())
+                .email(user.getEmail())
                 .build();
     }
 }

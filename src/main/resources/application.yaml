@@ -25,6 +25,26 @@ spring:
     schemas: users
     baselineOnMigrate: true
     enabled: true
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: 5671
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    ssl:
+      enabled: true
+  cloud:
+    stream:
+      default-binder: rabbit
+      bindings:
+        welcomeEmail-out-0:
+          destination: mail
+          content-type: application/json
+      rabbit:
+        bindings:
+          welcomeEmail-out-0:
+            producer:
+              routing-key-expression: welcome
+
 
 management:
   endpoints:
