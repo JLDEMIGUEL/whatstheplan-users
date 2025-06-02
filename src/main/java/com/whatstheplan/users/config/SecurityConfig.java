@@ -51,7 +51,12 @@ public class SecurityConfig {
         return (web) -> web.ignoring().requestMatchers(
                 new AntPathRequestMatcher("/actuator/health"),
                 new AntPathRequestMatcher("/actuator/health/liveness"),
-                new AntPathRequestMatcher("/actuator/health/readiness")
+                new AntPathRequestMatcher("/actuator/health/readiness"),
+                new AntPathRequestMatcher("/v3/api-docs/**"),
+                new AntPathRequestMatcher("/swagger-ui.html"),
+                new AntPathRequestMatcher("/swagger-ui/**"),
+                new AntPathRequestMatcher("/webjars/**"),
+                new AntPathRequestMatcher("/swagger-resources/**")
         );
     }
 }

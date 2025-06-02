@@ -4,6 +4,13 @@ import com.whatstheplan.users.model.entities.User;
 import com.whatstheplan.users.model.request.UserProfileRequest;
 import com.whatstheplan.users.model.response.UserResponse;
 import com.whatstheplan.users.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +32,18 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @CrossOrigin(originPatterns = "*")
+@Tag(name = "User Profile", description = "Operations to manage user profile")
 public class UsersController {
 
     private final UserService userService;
 
+    @Operation(summary = "Retrieve the profile of the authenticated user",
+            description = "Returns the profile information of the currently authenticated user.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User profile retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated", content = @Content)
+    })
     @GetMapping
     public ResponseEntity<UserResponse> retrieveUserProfile() {
         log.info("Getting user data for user: {}, email: {}", getUserId(), getUserEmail());
@@ -39,8 +54,18 @@ public class UsersController {
         return ResponseEntity.ok(UserResponse.from(savedUser));
     }
 
+    @Operation(summary = "Create a new user profile",
+            description = "Creates a new user profile with the provided information.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "User profile created successfully",
+                    content = @Content(schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request payload", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated", content = @Content)
+    })
     @PostMapping
-    public ResponseEntity<UserResponse> createNewUserProfile(@Valid @RequestBody UserProfileRequest request) {
+    public ResponseEntity<UserResponse> createNewUserProfile(
+            @Parameter(description = "User profile creation request", required = true)
+            @Valid @RequestBody UserProfileRequest request) {
         log.info("Creating new user profile with data: {}", request);
 
         User savedUser = userService.saveUser(request);
@@ -49,8 +74,18 @@ public class UsersController {
         return ResponseEntity.status(CREATED).body(UserResponse.from(savedUser));
     }
 
+    @Operation(summary = "Update the authenticated user's profile",
+            description = "Updates the user profile with the provided new data.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User profile updated successfully",
+                    content = @Content(schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request payload", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated", content = @Content)
+    })
     @PutMapping
-    public ResponseEntity<UserResponse> updateUserProfile(@Valid @RequestBody UserProfileRequest request) {
+    public ResponseEntity<UserResponse> updateUserProfile(
+            @Parameter(description = "User profile update request", required = true)
+            @Valid @RequestBody UserProfileRequest request) {
         log.info("Updating user profile with data: {}", request);
 
         User updatedUser = userService.updateUser(request);

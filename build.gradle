@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.4'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
 }
 
 group = 'com.whatstheplan'
@@ -39,6 +40,9 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
     implementation 'org.springframework.cloud:spring-cloud-stream-binder-rabbit'
 
+    implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
+
     implementation 'org.postgresql:postgresql:42.7.4'
     implementation 'org.flywaydb:flyway-core'
     implementation "org.flywaydb:flyway-database-postgresql"
@@ -70,3 +74,16 @@ tasks.named('test') {
         throw new GradleException("byte-buddy-agent JAR not found in test runtime classpath")
     }
 }
+
+tasks.jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true
+    }
+    sourceDirectories.setFrom(files(sourceSets.main.allSource.srcDirs))
+    classDirectories.setFrom(files(sourceSets.main.output))
+    executionData.setFrom(fileTree(buildDir).include("/jacoco/test.exec"))
+}
+
+
+build.dependsOn jacocoTestReport
