@@ -43,7 +43,7 @@ spring:
         bindings:
           welcomeEmail-out-0:
             producer:
-              routing-key-expression: welcome
+              routing-key: welcome
 
 
 management:
